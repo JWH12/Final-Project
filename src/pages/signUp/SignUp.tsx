@@ -1,6 +1,5 @@
 import React, { useState,useEffect, useCallback } from 'react';
 import './SignUp.css'
-import { YEAR, MONTH, DAY } from './Date';
 import DaumPostcode from 'react-daum-postcode';
 import Modal from 'react-modal';
 import axios from 'axios';
@@ -11,36 +10,48 @@ const SignUp =() => {
 // ====== 유효성 검사 ============================================================================
  
   // 이름, 전화번호, 이메일, 아이디, 비밀번호, 비밀번호 확인, 닉네임
-  const [name, setName] = useState<String>('')
-  const [phon, setPhon] = useState<String>('')
-  const [address, setAddress] = useState<String>('')
-  const [email, setEmail] = useState<String>('')
-  const [id, setId] = useState<String>('')
-  const [password, setPassword] = useState<String>('')
-  const [passwordConfirm, setPasswordConfirm] = useState<String>('')
-  const [nickName, setNickName] = useState<String>('')
+  const [name, setName] = useState('')
+  const [gender, setGender] = useState('M');
+  const [age, setAge] = useState('');
+  const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [nickName, setNickName] = useState('')
 
+  // const signUpValue = {
+  //   name: "",
+  //   gender: "M",
+  //   phon: "",
+  //   address: "",
+  //   email: "",
+  //   password: "",
+  //   passwordConfirm: "",
+  //   nickName: ""
+
+  // }
+  
+  
   // 오류메시지 상태저장
-  const [nameMessage, setNameMessage] = useState<String>('')
-  const [phonMessage, setPhonMessage] = useState<String>('')
-  const [addressMessage, setAddressMessage] = useState<String>('')
-  const [emailMessage, setEmailMessage] = useState<String>('')
-  const [idMessage, setIdMessage] = useState<String>('')
-  const [passwordMessage, setPasswordMessage] = useState<String>('')
-  const [passwordConfirmMessage, setPasswordConfirmMessage] = useState<String>('')
-  const [nickNameMessage, setNickNameMessage] = useState<String>('')
+  const [nameMessage, setNameMessage] = useState('')
+  const [ageMessage, setAgeMessage] = useState('')
+  const [phoneMessage, setPhoneMessage] = useState('')
+  const [addressMessage, setAddressMessage] = useState('')
+  const [emailMessage, setEmailMessage] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
+  const [passwordConfirmMessage, setPasswordConfirmMessage] = useState('')
+  const [nickNameMessage, setNickNameMessage] = useState('')
 
   // 유효성 검사
   const [isNameValid, setIsNameValid] = useState<Boolean>(false);
-  const [isPhon, setIsPhon] = useState<Boolean>(false)
+  const [isAge, setIsAge] = useState<Boolean>(false);
+  const [isPhone, setIsPhone] = useState<Boolean>(false)
   const [isAddress, setIsAddress] = useState<Boolean>(false)
   const [isEmailValid, setIsEmailValid] = useState<Boolean>(false)
-  const [isId, setIsId] = useState<Boolean>(false)
   const [isPassword, setIsPassword] = useState<Boolean>(false)
   const [isPasswordConfirm, setIsPasswordConfirm] = useState<Boolean>(false)
   const [isnickName, setIsNickName] = useState<Boolean>(false)
-  
-  const REGISTER_USERS_URL = "https://example.com/api/register";
 
   // 공백만, 공백 포함, 특수문자 포함 정규식
   const blank_pattern = /^\s+|\s+$/g;
@@ -48,6 +59,8 @@ const SignUp =() => {
   const special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
   const number_pattern = /^[0-9]+$/;
 
+
+  // db, 페이지 연결 및 회원가입 빈칸 오류메시지
   const onSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
@@ -55,17 +68,17 @@ const SignUp =() => {
       if (!isNameValid) {
         setNameMessage('이름을 입력해주세요.');
         return;
-      } else if (!isPhon) {
-        setPhonMessage('전화번호를 입력해주세요.');
+      } else if (!isAge) {
+        setAgeMessage('생년월일을 입력해주세요.');
+        return;
+      } else if (!isPhone) {
+        setPhoneMessage('전화번호를 입력해주세요.');
         return;
       } else if (!isAddress) {
         setAddressMessage('주소를 입력해주세요.');
         return;
       } else if (!isEmailValid) {
         setEmailMessage('이메일을 입력해주세요.');
-        return;
-      } else if (!isId) {
-        setIdMessage('아이디를 입력해주세요.');
         return;
       } else if (!isPassword) {
         setPasswordMessage('비밀번호를 입력해주세요.');
@@ -82,15 +95,20 @@ const SignUp =() => {
 
       try {
         await axios
-          .post(REGISTER_USERS_URL, {
-            userId:id,
-            userPhon:phon,
-            userAdress: address,
-            userName: name,
+          .post("api/signup", {
+            phone: phone,
+            address: address,
+            gender: gender,
+            name: name,
+            age: age,
             password: password,
-            nickName: nickName,
+            nickname: nickName,
             email: email
-          })
+          }, {
+            headers: { "Content-Type": `application/json` },
+          }
+          
+          )
           .then((res) => {
             console.log('회원가입 성공');
             console.log('response:', res)
@@ -100,7 +118,7 @@ const SignUp =() => {
         console.error(err)
       }
     },
-    [ id, name, phon, address, password, nickName, email, isNameValid, isEmailValid]
+    [name, age, gender , phone, address, password, nickName, email, isNameValid, isEmailValid]
   )
 
 
@@ -130,33 +148,70 @@ const SignUp =() => {
     }
   }, [])
 
+   //========= 생년월일 유효성 =========
+   const onChangeAge = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputAge = e.target.value;
+    setAge(inputAge);
+    
+    if (e.target.value.length < 8 || e.target.value.length > 8) {
+      setAgeMessage('올바른 형식으로 입력해주세요.')
+      setIsAge(false)
+    } else if(e.target.value.replace(blank_pattern, '') == ""){
+      setAgeMessage('공백만 입력되었습니다.')
+      setIsAge(false) 
+    } else if(blank_pattern2.test(e.target.value) == true){
+      setAgeMessage('공백이 입력되었습니다.')
+      setIsAge(false) 
+    } else if(special_pattern.test(e.target.value) == true){
+      setAgeMessage('특수문자가 입력되었습니다.')
+      setIsAge(false) 
+    } else if (inputAge.trim() === '') {
+      setAgeMessage('생년월일을 입력해주세요.');
+      setIsAge(false);
+    } else {
+      setAgeMessage('올바른 생년월일 형식입니다.')
+      setIsAge(true)
+    }
+  }, [])
 
   //========= 전화번호 유효성 =========
   const onChangePhon = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const inputPhon = e.target.value;
-    setPhon(inputPhon);
 
-    if(e.target.value.length < 3 || e.target.value.length > 4){
-      setPhonMessage('올바른 전화번호 형식이 아닙니다.')
-      setIsPhon(false)
+    // Remove any non-numeric characters from the input
+    const numericInput = inputPhon.replace(/\D/g, '');
+
+    // Format the numeric input with hyphens
+    const formattedPhone = numericInput.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+
+    setPhone(formattedPhone);
+
+    console.log(e.target.value)
+
+    if(e.target.value.length < 11 || e.target.value.length > 11){
+      setPhoneMessage('올바른 전화번호 형식이 아닙니다.')
+      setIsPhone(false)
     } else if(e.target.value.replace(blank_pattern, '') == ""){
-      setPhonMessage('공백만 입력되었습니다.')
-      setIsPhon(false) 
+      setPhoneMessage('공백만 입력되었습니다.')
+      setIsPhone(false) 
     } else if(blank_pattern2.test(e.target.value) == true){
-      setPhonMessage('공백이 입력되었습니다.')
-      setIsPhon(false) 
+      setPhoneMessage('공백이 입력되었습니다.')
+      setIsPhone(false) 
     } else if(special_pattern.test(e.target.value) == true){
-      setPhonMessage('특수문자가 입력되었습니다.')
-      setIsPhon(false) 
+      setPhoneMessage('특수문자가 입력되었습니다.')
+      setIsPhone(false) 
     } else if(!number_pattern.test(e.target.value)){
-      setPhonMessage('숫자만 입력가능합니다.')
-      setIsPhon(false) 
+      setPhoneMessage('숫자만 입력가능합니다.')
+      setIsPhone(false) 
     } else if (inputPhon.trim() === '') {
-      setPhonMessage('전화번호를 입력해주세요.');
-      setIsPhon(false);
-    }  else {
-      setPhonMessage('올바른 전화번호 형식입니다.')
-      setIsPhon(true)
+      setPhoneMessage('전화번호를 입력해주세요.');
+      setIsPhone(false);
+    } else if (formattedPhone.length !== 13) {
+      setPhoneMessage('올바른 전화번호 형식이 아닙니다.');
+      setIsPhone(false);
+    } else {
+      setPhoneMessage('올바른 전화번호 형식입니다.')
+      setIsPhone(true)
     }
   }, [])
 
@@ -166,7 +221,7 @@ const SignUp =() => {
     const inputAddress = e.target.value;
     setAddress(inputAddress);
 
-    if(e.target.value.length < 5 || e.target.value.length > 30){
+    if(e.target.value.length < 0 || e.target.value.length > 30){
       setAddressMessage('올바른 주소 형식이 아닙니다.')
       setIsAddress(false)
     } else if(e.target.value.replace(blank_pattern, '') == ""){
@@ -200,42 +255,12 @@ const SignUp =() => {
       setEmailMessage('공백이 입력되었습니다.')
       setIsEmailValid(false) 
     } 
-    // else if(special_pattern.test(e.target.value) == true){
-    //   setEmailMessage('특수문자가 입력되었습니다.')
-    //   setIsEmailValid(false) 
-    // } 
     else if (inputEmail.trim() === '') {
       setEmailMessage('이메일을 입력해주세요.');
       setIsEmailValid(false);
     } else {
       setEmailMessage('올바른 이메일 형식입니다.')
       setIsEmailValid(true)
-    }
-  }, [])
-
-
-  //========= 아이디 유효성 =========
-  const onChangeId = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputId = e.target.value;
-    setId(inputId)
-    if (e.target.value.length < 6 || e.target.value.length > 12) {
-      setIdMessage('6글자 이상 12글자 미만으로 입력해주세요.')
-      setIsId(false)
-    }else if(e.target.value.replace(blank_pattern, '') == ""){
-      setIdMessage('공백만 입력되었습니다.')
-      setIsId(false) 
-    } else if(blank_pattern2.test(e.target.value) == true){
-      setIdMessage('공백이 입력되었습니다.')
-      setIsId(false) 
-    } else if(special_pattern.test(e.target.value) == true){
-      setIdMessage('특수문자가 입력되었습니다.')
-      setIsId(false) 
-    } else if (inputId.trim() === '') {
-      setIdMessage('아이디를 입력해주세요.');
-      setIsId(false);
-    } else {
-      setIdMessage('올바른 아이디 형식입니다.')
-      setIsId(true)
     }
   }, [])
 
@@ -326,25 +351,9 @@ const SignUp =() => {
 
 //===== 성별 ====================================================
 
-  const [selectedGender, setSelectedGender] = useState('male');
 
   const genderOptionChange = (option) => {
-    setSelectedGender(option);
-  };
-
-  
-//===== 생년월일 ====================================================
-
-  const [userInput, setUserInput] = useState({
-    year: '',
-    month: '',
-    day: '',
-  });
-  
-
-  const birthInput = e => {
-    const { name, value } = e.target;
-    setUserInput({ ...userInput, [name]: value });
+    setGender(option);
   };
 
 
@@ -381,24 +390,7 @@ const SignUp =() => {
 
 
   //===== 이메일 ====================================================
-    // const [emailValue, setIEmailValue] = useState("");
-    // const [selectedOption, setSelectedOption] = useState("type");
-  
-    // const emailInputChange = (event) => {
-    //   const value = event.target.value;
-    //   setIEmailValue(value);
-    //   setSelectedOption("type"); // Reset selected option when input changes
-    // };
-  
-    // const emailSelectChange = (event) => {
-    //   const value = event.target.value;
-    //   setSelectedOption(value);
-    //   if (value === "type") {
-    //     setIEmailValue(""); // Clear input value when "직접 입력" is selected
-    //   } else {
-    //     setIEmailValue(value);
-    //   }
-    // };
+
 
   return (
 
@@ -434,22 +426,26 @@ const SignUp =() => {
             
                   <td>
                     <div className="gender-group">
-                      <label className={`gender-button ${selectedGender === 'male' ? 'selected' : ''}`}>
+                      <label className={`gender-button ${gender === 'M' ? 'selected' : ''}`}>
                         <input
                           type="radio"
-                          value="male"                          
-                          checked= {selectedGender === "checked"}
-                          onChange={() => genderOptionChange('male')}
+                          name='gender'
+                          value="M"
+                          title='gender'                          
+                          checked= {gender === "checked"}
+                          onChange={() => genderOptionChange('M')}
                         />
                         남
                       </label>
 
-                      <label className={`gender-button ${selectedGender === 'female' ? 'selected' : ''}`}>
+                      <label className={`gender-button ${gender === 'F' ? 'selected' : ''}`}>
                         <input
                           type="radio"
-                          value="female"
-                          checked={selectedGender === 'female'}
-                          onChange={() => genderOptionChange('female')}
+                          name='gender'
+                          value="F"
+                          title='gender'
+                          checked={gender === 'F'}
+                          onChange={() => genderOptionChange('F')}
                         />
                         여
                       </label>
@@ -464,22 +460,17 @@ const SignUp =() => {
                 <tr>
                   <td className="category-name">생년월일</td>
                   <td>
-                    <select className="date-select" id="birth-year" onChange={birthInput}>
-                      {YEAR.map(y => {
-                        return <option key={y}>{y}</option>;
-                      })}
-                    </select>
-                    <select className="date-select" id="birth-month" onChange={birthInput}>
-                      {MONTH.map(m => {
-                        return <option key={m}>{m}</option>;
-                      })}
-                    </select>
-                    
-                    <select className="date-select" id="birth-day" onChange={birthInput}>
-                      {DAY.map(d => {
-                        return <option key={d}>{d}</option>;
-                      })}
-                    </select>
+                    <input 
+                        type='tel'
+                        className={`category-box ${!isAge && 'invalid-input'}`}
+                        placeholder='생년월일을 입력해 주세요 ex) 19870105'
+                        name='age'
+                        onChange={onChangeAge}
+                        title='age'
+                    >
+                    </input>
+                    <div className={`message ${!isAge ? 'error' : age.length === 8 ? 'success' : ''}`}>
+                  {ageMessage}</div>
                   </td>
                 </tr>
 
@@ -489,40 +480,19 @@ const SignUp =() => {
                   <td className="category-name">전화번호</td>
 
                   <td>
-                    {/* <select className="number-select">
-                      <option value="select">선택</option>
-                      <option value="010">010</option>
-                      <option value="011">011</option>
-                    </select> */}
                      <input 
-                          type='text' 
-                          className={`number-input ${!isPhon && 'invalid-input'}`}
-                          name="phon"
-                          title='phon'
+                          type='tel' 
+                          className={`number-input ${!isPhone && 'invalid-input'}`}
+                          name="phone"
+                          title="phone"
+                          value={phone}
                           onChange={onChangePhon}
+                
                     >                          
                     </input>
 
-                    <span className="hyphen">-</span>
-                    <input 
-                          type='text' 
-                          className={`number-input ${!isPhon && 'invalid-input'}`}
-                          name="phon"
-                          title='phon'
-                          onChange={onChangePhon}
-                    >                          
-                    </input>
-                    <span className="hyphen">-</span>
-                    <input 
-                          type='text' 
-                          className={`number-input ${!isPhon && 'invalid-input'}`}
-                          name="phon"
-                          title='phon'
-                          onChange={onChangePhon}
-                    >                            
-                    </input>
-                    <div className={`message ${!isPhon ? 'error' : phon.length > 0 ? 'success' : ''}`}>
-                        {phonMessage}</div>
+                    <div className={`message ${!isPhone ? 'error' : phone.length > 0 ? 'success' : ''}`}>
+                        {phoneMessage}</div>
                     
                   </td>
                 </tr>
@@ -571,56 +541,14 @@ const SignUp =() => {
                           name='email'
                           title='email'
                           onChange={onChangeEmail}
-                    >                            
+                    >                             
                     </input>
-                    {/* <span>@</span>
 
-                    <input
-                        className="email-box2"
-                        id="domain-txt"
-                        type="text"
-                        value={emailValue}
-                        onChange={emailInputChange}
-                      />
-
-                      <select
-                        className="domain-box"
-                        id="domain-list"
-                        value={selectedOption}
-                        onChange={emailSelectChange}
-                      >
-                      <option value="type">직접 입력</option>
-                      <option value="naver.com">naver.com</option>
-                      <option value="google.com">google.com</option>
-                      <option value="daum.net">daum.net</option>
-                    </select> */}
                      <div className={`message ${!isEmailValid ? 'error' : email.length > 0 ? 'success' : ''}`}>
                   {emailMessage}</div>
                   </td>
 
                 </tr>
-
-
-              {/* ======= 아이디 ============================  */}
-                <tr>
-                  <td className="category-name">아이디</td>
-                  <td>
-                    <input     
-                          type='text' 
-                          placeholder='아이디를 입력해 주세요' 
-                          className= {`category-box ${!isId && 'invalid-input'}`}
-                          name="id"
-                          title="id"
-                          onChange={onChangeId}
-                    >
-                    </input>
-                    <button className="check-btn">중복확인</button>
-                    <div className={`message ${!isId ? 'error' : id.length > 0 ? 'success' : ''}`}>
-                         {idMessage}</div>
-                    
-                  </td>
-                </tr>
-
 
               {/* ======= 비밀번호 ============================  */}
                 <tr>
@@ -687,8 +615,6 @@ const SignUp =() => {
         </form>
       </div>
     </>
-
-    
 
   )
 }
