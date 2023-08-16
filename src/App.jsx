@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import {Route, Routes} from 'react-router-dom';
+
+
+
 import './scss/App.scss'
 import Main from './pages/Main'
 import Header from './components/layouts/Header'
 import Footer from './components/layouts/Footer'
 
-import {Route, Routes} from 'react-router-dom';
 import About from './pages/about/About';
 import Board from './pages/board/Board';
 import Login from './pages/login/Login';
@@ -17,7 +20,6 @@ import VolunteerReview from './pages/myPage/VolunteerReview';
 import WishList from './pages/myPage/WishList'
 import Qna from './pages/qna/Qna';
 import SignUp from './pages/signUp/SignUp';
-import Test from './pages/signUp/Test';
 import Volunteer from './pages/volunteer/Volunteer';
 import VolunteerHeaders from './pages/myPage/VolunteerHeaders';
 
@@ -43,7 +45,6 @@ function App() {
         <Route path="/login/*" element={<Login/>} />
         <Route path="/FindUser/*" element={<FindUser/>} />
         <Route path="/Signup/*" element={<SignUp/>} />
-        <Route path="/Test/*" element={<Test/>} />
         <Route path="/manager/*" element={<Manager/>} />
       </Routes>
 

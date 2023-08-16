@@ -15,18 +15,18 @@ function Login() {
   return (
    
     <>
-      <form>
+      <form method='post' action='/login'>
         <div className="login-box">
        
        
         <img className="logo-size" src="/images/logo2.png" alt="로고이미지" />
       
           
-        <div><input type='text' className="login-textbox" placeholder='아이디를 입력해 주세요'></input></div>
-        <div><input type='text' className="login-textbox" placeholder='비밀번호를 입력해 주세요'></input></div>
+        <div><input type='text' name='email' className="login-textbox" placeholder='아이디를 입력해 주세요'></input></div>
+        <div><input type='text' name='password' className="login-textbox" placeholder='비밀번호를 입력해 주세요'></input></div>
 
           <div>
-            <button className="login-button">로그인</button>
+            <button className="login-button" type='button'>로그인</button>
           </div>
 
           <a href="/" className="social-button" id="google-connect">
