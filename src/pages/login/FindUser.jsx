@@ -18,50 +18,50 @@ function FindUser() {
    
     <>
       <form>
-        <div class="head-font">{tabText}</div>
+        <div className="head-font">{tabText}</div>
     
-        <div class="main">
+        <div className="main">
           <input type="radio" id="tab-1" name="show" checked={tabText === '아이디 찾기'}
             onChange={handleTabChange}/>
           <input type="radio" id="tab-2" name="show" checked={tabText === '비밀번호 찾기'}
             onChange={handleTabChange} />
           
-          <div class="tab">
+          <div className="tab">
             <label for="tab-1">아이디 찾기</label>
             <label for="tab-2">비밀번호 찾기</label>
           </div>
 
-          <div class="head-font-bottom"></div>
+          <div className="head-font-bottom"></div>
 
-          <div class="logo-div">
-          <img src="/images/logo2.png" class="findUser-logo" alt="로고이미지"></img>
+          <div className="logo-div">
+          <img src="/images/logo2.png" className="findUser-logo" alt="로고이미지"></img>
           </div>
 
-          <div class="content">
+          <div className="content">
             
             {/* ==================== 아이디 찾기 ===================================================== */}
          
-            <div class="content-dis">
+            <div className="content-dis">
 
-              <div><input type='text' class="findUser-textbox" placeholder='이름을 입력해 주세요'></input></div>
-              <div><input type='text' class="findUser-textbox" placeholder='이메일을 입력해 주세요'></input></div>
+              <div><input type='text' className="findUser-textbox" placeholder='이름을 입력해 주세요'></input></div>
+              <div><input type='text' className="findUser-textbox" placeholder='이메일을 입력해 주세요'></input></div>
               
               <div>
-              <button class="findUser-button">아이디 찾기</button>
+              <button className="findUser-button">아이디 찾기</button>
               </div>
 
             </div>
 
 
             {/* ==================== 비밀번호 찾기 ===================================================== */}
-            <div class="content-dis">
+            <div className="content-dis">
               
-              <div><input type='text' class="findUser-textbox" placeholder='이름을 입력해 주세요'></input></div>
-              <div><input type='text' class="findUser-textbox" placeholder='아이디를 입력해 주세요'></input></div>
-              <div><input type='text' class="findUser-textbox" placeholder='이메일을 입력해 주세요'></input></div>
+              <div><input type='text' className="findUser-textbox" placeholder='이름을 입력해 주세요'></input></div>
+              <div><input type='text' className="findUser-textbox" placeholder='아이디를 입력해 주세요'></input></div>
+              <div><input type='text' className="findUser-textbox" placeholder='이메일을 입력해 주세요'></input></div>
               
               <div>
-              <button class="findUser-button">비밀번호 찾기</button>
+              <button className="findUser-button">비밀번호 찾기</button>
               
               </div>
             </div>

@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import SlideBanner from '../components/SlideBanner'
 import VolunteerBanner from '../components/VolunteerBanner'
 
 function Main() {
+
+
   return (
     <main>
       <SlideBanner />
