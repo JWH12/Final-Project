@@ -40,7 +40,7 @@ const SignUp =() => {
 //===== 닉네임 중복검사 ====================================================
 
 const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
-const [nicknameAvailabilityMessage, setNicknameAvailabilityMessage] = useState('');
+
 
 const checkNicknameAvailability = async () => {
   try {
@@ -50,11 +50,12 @@ const checkNicknameAvailability = async () => {
     if (isAvailable) {
       setIsNicknameAvailable(true);
       alert('사용 가능한 닉네임입니다.');
-      setNicknameAvailabilityMessage('사용 가능한 닉네임입니다')
+      setNickNameMessage('사용 가능한 닉네임입니다')
+      setIsNickName(true)
     } else {
       setIsNicknameAvailable(false);
       alert('이미 사용 중인 닉네임입니다.');
-      setNicknameAvailabilityMessage('이미 사용 중인 닉네임입니다')
+      setNickNameMessage('이미 사용 중인 닉네임입니다')
     }
   } catch (error) {
     console.error('닉네임 중복 확인 중 에러:', error);
@@ -65,7 +66,6 @@ const checkNicknameAvailability = async () => {
 //===== 이메일 중복검사 ====================================================
 
 const [isEmailAvailable, setIsEmailAvailable] = useState(false);
-const [emailAvailabilityMessage, setEmailAvailabilityMessage] = useState('');
 
 const checkEmailAvailability = async () => {
   try {
@@ -75,11 +75,12 @@ const checkEmailAvailability = async () => {
     if (isEmailAvailable) {
       setIsEmailAvailable(true);
       alert('사용 가능한 이메일입니다.');
-      setEmailAvailabilityMessage('사용 가능한 이메일입니다')
+      setEmailMessage('사용 가능한 이메일입니다')
+      setIsEmailValid(true)
     } else {
       setIsEmailAvailable(false);
       alert('이미 사용 중인 이메일입니다.');
-      setEmailAvailabilityMessage('이미 사용 중인 이메일입니다')
+      setEmailMessage('이미 사용 중인 이메일입니다')
     }
   } catch (error) {
     console.error('이메일 중복 확인 중 에러:', error);
@@ -87,7 +88,7 @@ const checkEmailAvailability = async () => {
 };
 
 
-//===== 나이계산 ====================================================
+//===== 생년월일 DB이동 나이계산 ====================================================
 const [birthdate, setBirthdate] = useState('');
 
 const calculateAge = (birthDate) => {
@@ -131,18 +132,16 @@ const calculateAge = (birthDate) => {
   const [ageMessage, setAgeMessage] = useState('');
   const [phoneMessage, setPhoneMessage] = useState('');
   const [addressMessage, setAddressMessage] = useState('');
-  const [DetailAddressMessage, setDetailAddressMessage] = useState('');
+  const [detailAddressMessage, setDetailAddressMessage] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
   const [passwordConfirmMessage, setPasswordConfirmMessage] = useState('');
-  const [nickNameMessage, setNickNameMessage] = useState('');
+  const [nicknameAvailabilityMessage, setNickNameMessage] = useState('');
 
   // 유효성 검사
   const [isNameValid, setIsNameValid] = useState(false);
-  const [isgender, setIsGender] = useState(false);
   const [isAge, setIsAge] = useState(false);
   const [isPhone, setIsPhone] = useState(false);
-  const [isAddress, setIsAddress] = useState(false);
   const [isDetailAddress, setIsDetailAddress] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPassword, setIsPassword] = useState(false);
@@ -174,8 +173,8 @@ const calculateAge = (birthDate) => {
       } else if (!isPhone) {
         setPhoneMessage('전화번호를 입력해주세요.');
         return;
-      } else if (!isDetailAddress) {
-        setAddressMessage('주소를 입력해주세요.');
+      } else if (!detailAddress) {
+        setDetailAddressMessage('주소를 입력해주세요.');
         return;
       } else if (!isEmailValid) {
         setEmailMessage('이메일을 입력해주세요.');
@@ -183,17 +182,8 @@ const calculateAge = (birthDate) => {
       } else if (!isPassword) {
         setPasswordMessage('비밀번호를 입력해주세요.');
         return;
-      } else if (!isPasswordConfirm) {
-        setPasswordConfirmMessage('비밀번호 확인을 해주세요.');
-        return;
-      } else if (!isnickName) {
+      } else if (nickName === '') {
         setNickNameMessage('닉네임을 입력해주세요.');
-        return;
-      } else if (!isNicknameAvailable) {
-        setNickNameMessage('닉네임 중복확인이 필요합니다.');
-        return;
-      }else if (!isEmailAvailable) {
-        setEmailMessage('이메일 중복확인이 필요합니다.');
         return;
       } 
 
@@ -220,14 +210,14 @@ const calculateAge = (birthDate) => {
             alert('회원가입이 완료되었습니다.');
             console.log('Age:', calculatedAge);
             console.log('response:', res);
-            // navigate('/login');
+            navigate('/login');
            
           })        
       } catch (err) {
         console.error(err)
       }
     },
-    [name, age, gender , phone, isAddress, roadAddress, detailAddress, password, nickName , email, isNameValid, isEmailValid]
+    [name, age, gender , phone, roadAddress, detailAddress, password, nickName , email, isNameValid, isEmailValid, isDetailAddress]
   );
 
   //========= 이름 유효성 =========
@@ -256,17 +246,6 @@ const calculateAge = (birthDate) => {
       setIsNameValid(true);
     }     console.log(isNameValid);
   }, []);
- 
-  useEffect(() => {
-    console.log('isNameValid:', isNameValid);
-    console.log('isAge:', isAge);
-    console.log('isPhone:', isPhone);
-    console.log('isDetailAddress:', isDetailAddress);
-    console.log('isEmailValid:', isEmailValid);
-    console.log('isPassword:', isPassword);
-    console.log('isNicknameAvailable:', isNicknameAvailable);
-    console.log('============================================================')
-  }, [isNameValid, isAge, isPhone, isAddress, isEmailValid, isPassword, isNicknameAvailable]);
 
 
    //========= 생년월일 유효성 ========
@@ -294,6 +273,7 @@ const calculateAge = (birthDate) => {
       setIsAge(true)
     }
   }, []);
+
 
   //========= 전화번호 유효성 =========
   const onChangePhon = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -349,7 +329,7 @@ const calculateAge = (birthDate) => {
 
     if(e.target.value.length === 0 || e.target.value.length > 30){
       setAddressMessage('올바른 주소 형식이 아닙니다.')
-      setIsAddress(false)
+      setIsDetailAddress(false)
     } else if(e.target.value.replace(blank_pattern, '') == ""){
       setDetailAddressMessage('공백만 입력되었습니다.')
       setIsDetailAddress(false) 
@@ -365,7 +345,6 @@ const calculateAge = (birthDate) => {
     }     
   }, []);
   
-
 
   //========= 이메일 유효성 =========
   const onChangeEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -385,8 +364,8 @@ const calculateAge = (birthDate) => {
       setEmailMessage('이메일을 입력해주세요.');
       setIsEmailValid(false);
     } else {
-      setEmailMessage('올바른 이메일 형식입니다.')
-      setIsEmailValid(true)
+      setEmailMessage('중복확인을 해주세요')
+      setIsEmailValid(false)
     }      
   }, []);
 
@@ -448,21 +427,23 @@ const calculateAge = (birthDate) => {
     if (e.target.value.length < 2 || e.target.value.length > 8) {
       setNickNameMessage('2글자 이상 8글자 미만으로 입력해주세요.')
       setIsNickName(false)
+      e.preventDefault();
     }else if(e.target.value.replace(blank_pattern, '') == ""){
       setNickNameMessage('공백만 입력되었습니다.')
       setIsNickName(false) 
+      e.preventDefault();
     } else if(blank_pattern2.test(e.target.value) == true){
       setNickNameMessage('공백이 입력되었습니다.')
       setIsNickName(false) 
+      e.preventDefault();
     } else if(special_pattern.test(e.target.value) == true){
       setNickNameMessage('특수문자가 입력되었습니다.')
       setIsNickName(false) 
-    } else if (inputNickName.trim() === '') {
-      setNickNameMessage('닉네임을 입력해주세요.');
-      setIsNickName(false);
+      e.preventDefault();
     } else {
-      setNickNameMessage('올바른 닉네임 형식입니다.')
-      setIsNickName(true)
+      setNickNameMessage('중복확인을 해주세요')
+      setIsNickName(false)
+      e.preventDefault();
     }      
   }, []);
 
@@ -528,7 +509,7 @@ const genderOptionChange = (option) => {
                 
                 <tr>
                   <td className="category-name">성별</td>
-            
+
                   <td>
                     <div className="gender-group">
                       <label className={`gender-button ${gender === 'M' ? 'selected' : ''}`}>
@@ -634,8 +615,8 @@ const genderOptionChange = (option) => {
                     >                    
                     </input>
                     
-                    <div className={`message ${!isDetailAddress ? 'error' : detailAddress.length > 0 ? 'success' : ''}`}>
-                                    {DetailAddressMessage}</div>
+                    <div className={`message ${!detailAddress ? 'error' : detailAddress.length > 0 ? 'success' : ''}`}>
+                                    {detailAddressMessage}</div>
 
                     <Modal isOpen={isOpen} ariaHideApp={false} className="address-modal">
                       <DaumPostcode onComplete={completeHandler}  />
@@ -662,7 +643,7 @@ const genderOptionChange = (option) => {
                     <button type='button' className="check-btn" onClick={checkEmailAvailability}>중복확인</button>
 
                      <div className={`message ${isEmailAvailable ? 'success' : 'error'}`}>
-                  {emailAvailabilityMessage}</div>
+                  {emailMessage}</div>
                
                   </td>
 
@@ -716,7 +697,7 @@ const genderOptionChange = (option) => {
                     <input        
                           type='text' 
                           placeholder='닉네임을 입력해 주세요' 
-                          className={`category-box ${!isnickName && 'invalid-input'}`}
+                          className={`category-box ${!isNicknameAvailable && 'invalid-input'}`}
                           name="nickname"
                           title='nickName'
                           onChange={onChangeNickName}
